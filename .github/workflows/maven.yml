@@ -27,4 +27,5 @@ jobs:
     - name: Upload maven artifact
       uses: actions/upload-artifact@v3
       with:
+        name: deploy-artifact
         path: target/*.jar
