@@ -26,3 +26,5 @@ jobs:
       run: mvn -B package --file pom.xml
     - name: Upload maven artifact
       uses: actions/upload-artifact@v3
+      with:
+        path: target/*.jar
