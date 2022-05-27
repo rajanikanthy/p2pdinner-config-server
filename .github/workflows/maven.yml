@@ -25,4 +25,4 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Upload maven artifact
-      uses: actions/upload-artifact@3
+      uses: actions/upload-artifact@v3
