@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
@@ -29,7 +29,7 @@ spec:
         app: p2pdinner-config-server
     spec:
       containers:
-      - image: gcr.io/glowing-vehicle-220016/p2pdinner-config-service:latest
+      - image: localhost:5000/config-server
         imagePullPolicy: Always
         name: p2pdinner-config-service
         resources: {}
