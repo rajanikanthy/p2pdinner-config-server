@@ -43,6 +43,6 @@ jobs:
       - name: Compress
         uses: TonyBogdanov/zip@1.0
         with:
-          args: zip -qq -r ${{steps.download.outputs.download-path}} ./staging
+          args: zip -qq -r ${{steps.download.outputs.download-path}}/deploy-artifact.zip ./staging
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag config-server:$(date +%s)
