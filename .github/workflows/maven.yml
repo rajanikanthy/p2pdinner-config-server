@@ -32,9 +32,8 @@ jobs:
         name: deploy-artifact
         path: staging
   package:
-
     runs-on: ubuntu-latest
-
+    needs: [ build ]
     steps:
       - name: Download a Build Artifact
         uses: actions/download-artifact@v3.0.0
