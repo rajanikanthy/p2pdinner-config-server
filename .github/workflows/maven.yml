@@ -25,7 +25,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Staging
-      run: mkdir staging && cp target/*.jar staging && cp Dockerfile staging
+      run: mkdir staging && cp target staging && cp Dockerfile staging
     - name: Upload maven artifact
       uses: actions/upload-artifact@v3
       with:
@@ -42,11 +42,5 @@ jobs:
           name: deploy-artifact
       - name: Echo files in deploy folder
         run: ls -altr ${{steps.download.outputs.download-path}}
-      - name: Compress
-        uses: TonyBogdanov/zip@1.0
-        with:
-          args: unzip -qq ${{steps.download.outputs.download-path}}/deploy-artifact.zip ./staging
-      - name: list-staging-files
-        run: ls -altr ./staging
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag config-server:$(date +%s)
+        run: cd ${{steps.download.outputs.download-path}} && docker build . --file Dockerfile --tag config-server:$(date +%s)
