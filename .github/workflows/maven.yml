@@ -42,5 +42,9 @@ jobs:
           name: deploy-artifact
       - name: Echo files in deploy folder
         run: ls -altr ${{steps.download.outputs.download-path}}
+      - name: Set docker tag
+        run: echo "DOCKER_TAG=$(date +%s)" >> $GITHUB_ENV
+      - name: Output docker tag
+        run: echo ${{ env.DOCKER_TAG }}
       - name: Build the Docker image
-        run: cd ${{steps.download.outputs.download-path}} && docker build . --file Dockerfile --tag config-server:$(date +%s)
+        run: cd ${{steps.download.outputs.download-path}} && docker build . --file Dockerfile --tag config-server:${{ env.DOCKER_TAG }}
