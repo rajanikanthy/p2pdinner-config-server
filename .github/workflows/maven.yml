@@ -47,4 +47,18 @@ jobs:
       - name: Output docker tag
         run: echo ${{ env.DOCKER_TAG }}
       - name: Build the Docker image
-        run: cd ${{steps.download.outputs.download-path}} && docker build . --file Dockerfile --tag config-server:${{ env.DOCKER_TAG }}
+        run: cd ${{steps.download.outputs.download-path}} && docker build . --file Dockerfile --tag registry.digitalocean.com/p2pdinner/config-server:${{ env.DOCKER_TAG }}
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          registry: registry.digitalocean.com
+          username: ${{ secrets.DOCN_CR_ACCESS_TOKEN }}
+          password: ${{ secrets.DOCN_CR_ACCESS_TOKEN }}
+          logout: true
+      - name: Push image to registry
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tag: registry.digitalocean.com/p2pdinner/config-server:${{ env.DOCKER_TAG }}
+
