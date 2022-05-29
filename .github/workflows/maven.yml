@@ -40,6 +40,8 @@ jobs:
         id: download
         with:
           name: deploy-artifact
+      - name: Echo files in deploy folder
+        run: ls -altr ${{steps.download.outputs.download-path}}
       - name: Compress
         uses: TonyBogdanov/zip@1.0
         with:
