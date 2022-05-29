@@ -60,5 +60,5 @@ jobs:
         with:
           context: .
           push: true
-          tag: registry.digitalocean.com/p2pdinner/config-server:${{ env.DOCKER_TAG }}
+          tags: registry.digitalocean.com/p2pdinner/config-server:${{ env.DOCKER_TAG }}
 
