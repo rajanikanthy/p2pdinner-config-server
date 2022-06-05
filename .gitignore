@@ -25,3 +25,4 @@ nbdist/
 .vscode/
 
 docker-compose.yml
+run.sh
