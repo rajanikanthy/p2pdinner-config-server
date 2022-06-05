@@ -11,30 +11,30 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-    - name: Staging
-      run: mkdir staging && cp -rvf target staging && cp Dockerfile staging
-    - name: Upload maven artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: deploy-artifact
-        path: staging
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      - name: Staging
+        run: mkdir staging && cp -rvf target staging && cp Dockerfile staging && cp metadata.json staging
+      - name: Upload maven artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: deploy-artifact
+          path: staging
   package:
     runs-on: ubuntu-latest
     needs: [ build ]
     steps:
+      - name: Display setup
+        run: echo ${{ matrix.imageName }}
       - name: Download a Build Artifact
         uses: actions/download-artifact@v3.0.0
         id: download
@@ -42,12 +42,20 @@ jobs:
           name: deploy-artifact
       - name: Echo files in deploy folder
         run: ls -altr ${{steps.download.outputs.download-path}}
-      - name: Set docker tag
-        run: echo "DOCKER_TAG=$(date +%s)" >> $GITHUB_ENV
-      - name: Output docker tag
-        run: echo ${{ env.DOCKER_TAG }}
+      - name: read image name
+        id: read_image_name
+        uses: MegaPiggy/json-reader-action@v1.0.0
+        with:
+          path: metadata.json
+          property: "imageName"
+      - name: read tag
+        id: read_tag
+        uses: MegaPiggy/json-reader-action@v1.0.0
+        with:
+          path: metadata.json
+          property: "tag"
       - name: Build the Docker image
-        run: cd ${{steps.download.outputs.download-path}} && docker build . --file Dockerfile --tag registry.digitalocean.com/p2pdinner/config-server:${{ env.DOCKER_TAG }}
+        run: cd ${{steps.download.outputs.download-path}} && docker build . --file Dockerfile --tag registry.digitalocean.com/p2pdinner/${{ steps.read_image_name.outputs.value }}:${{ steps.read_tag.outputs.value }}
       - name: Docker login
         uses: docker/login-action@v2
         with:
@@ -60,5 +68,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: registry.digitalocean.com/p2pdinner/config-server:${{ env.DOCKER_TAG }}
+          tags: registry.digitalocean.com/p2pdinner/${{ steps.read_image_name.outputs.value }}:${{ steps.read_tag.outputs.value }}
 
